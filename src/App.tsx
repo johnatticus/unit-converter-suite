@@ -1,12 +1,8 @@
-import Converter from './components/Converter';
+import MainLayout from './components/Main';
 
 function App() {
-  return (
-    <div style={{ padding: '2rem' }}>
-      <h1>Unit Converter Suite</h1>
-      <Converter />
-    </div>
-  );
+  return <MainLayout />;
 }
+
 
 export default App;

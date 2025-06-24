@@ -1,14 +1,25 @@
-import { useState } from 'react';
-import { convertUnit, units } from '../utils/conversion';
-import type { UnitCategory } from '../utils/conversion';
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { convertUnit, units, type UnitCategory } from "@/utils/conversion";
 
 const Converter = () => {
-  const [category, setCategory] = useState<UnitCategory>('length');
-  const [fromUnit, setFromUnit] = useState<string>('meters');
-  const [toUnit, setToUnit] = useState<string>('feet');
+  const [category, setCategory] = useState<UnitCategory>("length");
+  const [fromUnit, setFromUnit] = useState<string>("meters");
+  const [toUnit, setToUnit] = useState<string>("feet");
   const [inputValue, setInputValue] = useState<number>(1);
   const [result, setResult] = useState<number | null>(null);
+
+  const unitOptions = Object.keys(units[category]);
 
   const handleConvert = () => {
     try {
@@ -20,54 +31,100 @@ const Converter = () => {
     }
   };
 
-  const unitOptions = Object.keys(units[category]);
-
   return (
-    <div>
-      <h2>Unit Converter</h2>
-
-      <label>Category:</label>
-      <select value={category} onChange={(e) => {
-        const newCategory = e.target.value as UnitCategory;
-        setCategory(newCategory);
-        const defaultUnits = Object.keys(units[newCategory]);
-        setFromUnit(defaultUnits[0]);
-        setToUnit(defaultUnits[1] || defaultUnits[0]);
-      }}>
-        {Object.keys(units).map((cat) => (
-          <option key={cat} value={cat}>{cat}</option>
-        ))}
-      </select>
-
-      <div style={{ marginTop: '1rem' }}>
-        <input
-          type="number"
-          value={inputValue}
-          onChange={(e) => setInputValue(parseFloat(e.target.value))}
-        />
-        <select value={fromUnit} onChange={(e) => setFromUnit(e.target.value)}>
-          {unitOptions.map((unit) => (
-            <option key={unit} value={unit}>{units[category][unit].name}</option>
+    <Card className="shadow-md">
+  <CardHeader>
+    <CardTitle className="text-xl text-center">Unit Converter</CardTitle>
+  </CardHeader>
+  <CardContent className="space-y-6">
+    {/* Category Selector */}
+    <div className="space-y-2">
+      <Label>Category</Label>
+      <Select
+        value={category}
+        onValueChange={(val) => {
+          const newCat = val as UnitCategory;
+          setCategory(newCat);
+          const defaults = Object.keys(units[newCat]);
+          setFromUnit(defaults[0]);
+          setToUnit(defaults[1] || defaults[0]);
+        }}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select a category" />
+        </SelectTrigger>
+        <SelectContent>
+          {Object.keys(units).map((cat) => (
+            <SelectItem key={cat} value={cat}>
+              {cat}
+            </SelectItem>
           ))}
-        </select>
+        </SelectContent>
+      </Select>
+    </div>
 
-        <span> ➡ </span>
-
-        <select value={toUnit} onChange={(e) => setToUnit(e.target.value)}>
-          {unitOptions.map((unit) => (
-            <option key={unit} value={unit}>{units[category][unit].name}</option>
-          ))}
-        </select>
+    {/* From/To Selectors */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label>From</Label>
+        <Select value={fromUnit} onValueChange={setFromUnit}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {unitOptions.map((unit) => (
+              <SelectItem key={unit} value={unit}>
+                {units[category][unit].name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      <Button onClick={handleConvert} style={{ marginTop: '1rem' }}>Convert</Button>
-
-      {result !== null && (
-        <div style={{ marginTop: '1rem' }}>
-          <strong>Result:</strong> {result.toFixed(4)} {units[category][toUnit].symbol}
-        </div>
-      )}
+      <div className="space-y-2">
+        <Label>To</Label>
+        <Select value={toUnit} onValueChange={setToUnit}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {unitOptions.map((unit) => (
+              <SelectItem key={unit} value={unit}>
+                {units[category][unit].name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
+
+    {/* Input */}
+    <div className="space-y-2">
+      <Label>Value</Label>
+      <Input
+        type="number"
+        value={inputValue}
+        onChange={(e) => setInputValue(parseFloat(e.target.value))}
+      />
+    </div>
+
+    {/* Convert Button */}
+    <div>
+      <Button className="w-full" onClick={handleConvert}>
+        Convert
+      </Button>
+    </div>
+
+    {/* Result */}
+    {result !== null && (
+      <div className="text-center font-semibold text-lg pt-2">
+        {inputValue} {units[category][fromUnit].symbol} ={" "}
+        {result.toFixed(4)} {units[category][toUnit].symbol}
+      </div>
+    )}
+  </CardContent>
+</Card>
+
   );
 };
 
