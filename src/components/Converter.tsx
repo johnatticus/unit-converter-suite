@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { convertUnit, units, UnitCategory } from '../utils/conversion';
+import { convertUnit, units } from '../utils/conversion';
+import type { UnitCategory } from '../utils/conversion';
+import { Button } from "@/components/ui/button"
 
 const Converter = () => {
   const [category, setCategory] = useState<UnitCategory>('length');
@@ -58,7 +60,7 @@ const Converter = () => {
         </select>
       </div>
 
-      <button onClick={handleConvert} style={{ marginTop: '1rem' }}>Convert</button>
+      <Button onClick={handleConvert} style={{ marginTop: '1rem' }}>Convert</Button>
 
       {result !== null && (
         <div style={{ marginTop: '1rem' }}>
